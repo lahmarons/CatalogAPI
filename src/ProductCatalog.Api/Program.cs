@@ -27,7 +27,7 @@ using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
-    // Attend que la base soit disponible et crée le schéma
+    // Création du schéma de la base de données
     db.Database.EnsureCreated();
 }
 
@@ -40,17 +40,17 @@ app.MapGet("/health", () => Results.Ok(new
 .WithName("HealthCheck");
 
 // 2. Endpoint : récupérer tous les produits
-app.MapGet("/api/products", async (AppDbContext db) =>
+app.MapGet("/api/get-all-products", async (AppDbContext db) =>
     await db.Products.AsNoTracking().ToListAsync())
 .WithName("GetAllProducts");
 
 // 3. Endpoint : ajouter un produit
-app.MapPost("/api/products", async (Product product, AppDbContext db) =>
+app.MapPost("/api/create-product", async (Product product, AppDbContext db) =>
 {
     db.Products.Add(product);
     await db.SaveChangesAsync();
 
-    return Results.Created($"/api/products/{product.Id}", product);
+    return Results.Created($"/api/create-product/{product.Id}", product);
 })
 .WithName("CreateProduct");
 
